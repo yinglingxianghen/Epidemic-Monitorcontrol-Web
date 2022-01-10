@@ -1,9 +1,6 @@
 # encoding: utf-8
-"""
-@author: 夏洛
-@QQ: 1972386194
-@file: test.py
-"""
+
+
 
 import pymysql
 

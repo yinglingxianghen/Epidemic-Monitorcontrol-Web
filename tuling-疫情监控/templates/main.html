@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>监控</title>
+    <link rel="stylesheet" href="../static/css/main.css">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/echarts/3.7.1/echarts.min.js"></script>
+
+    <script src="../static/js/china.js"></script>
+    <script src="../static/js/echarts-wordcloud.min.js"></script>
+
+{#<script src="http://122.51.251.91/static/js/echarts-wordcloud.min.js"></script>#}
+{#<script src="../static/js/china.js"></script>#}
+{#    <script src="http://122.51.251.91/static/js/china.js"></script>#}
+</head>
+
+<body>
+
+<div id="title">老朱疫情监控系统</div>
+<div id="time">获取服务器时间</div>
+<div id="l1">左1 全国累计</div>
+<div id="l2">左2 全国新增</div>
+<div id="c1">
+    <div class="num"><h1>123</h1></div>
+    <div class="num"><h1>123</h1></div>
+    <div class="num"><h1>123</h1></div>
+    <div class="num"><h1>123</h1></div>
+    <div class="txt"><h2>累积人数</h2></div>
+    <div class="txt"><h2>累积确诊</h2></div>
+    <div class="txt"><h2>累积疑似</h2></div>
+    <div class="txt"><h2>累积死亡</h2></div>
+
+</div>
+<div id="c2">
+
+</div>
+<div id="r1">右1</div>
+<div id="r2">右2</div>
+
+<script src="../static/js/dark.js"></script>
+<script src="../static/js/ec_center.js"></script>
+<script src="../static/js/ec_left1.js"></script>
+<script src="../static/js/ec_left2.js"></script>
+<script src="../static/js/ec_right1.js"></script>
+<script src="../static/js/ec_right2.js"></script>
+
+<script>
+    function gettime() {
+        $.ajax({
+            url:'/time',
+            timeout:10000,
+            success:function (res) {
+                $('#time').html(res)
+            },
+            error:function () {
+                alert('时间错误')
+            }
+        });
+    }
+
+    function get_c1_data() {
+        $.ajax({
+            url :'/c1',
+            success:function (res) {
+                $(".num h1").eq(0).text(res.confirm);
+                $(".num h1").eq(1).text(res.suspect);
+                $(".num h1").eq(2).text(res.heal);
+                $(".num h1").eq(3).text(res.dead);
+            },
+            error:function () {
+                alert('alax执行错误')
+            }
+        })
+    }
+
+    function get_c2_data() {
+        $.ajax({
+            url:'/c2',
+            success:function (res) {
+                ec_center_option.series[0].data = res.data;
+                ec_center.setOption(ec_center_option)
+            },
+            error:function () {
+              alert('错误')
+            }
+        })
+    }
+
+    function get_l1_data() {
+        $.ajax({
+            url:'/l1',
+            success:function (res) {
+                console.log(res);
+                ec_left1_Option.xAxis[0].data=res.day;
+                ec_left1_Option.series[0].data = res.confirm;
+                ec_left1_Option.series[1].data= res.suspect;
+                ec_left1_Option.series[2].data = res.heal;
+                ec_left1_Option.series[3].data = res.dead;
+                ec_left1.setOption(ec_left1_Option)
+            },
+            error:function () {
+              alert('错误')
+            }
+        })
+    }
+
+    function get_l2_data() {
+        $.ajax({
+            url:'/l2',
+            success:function (res) {
+                console.log(res);
+                ec_left2_Option.xAxis[0].data=res.day;
+                ec_left2_Option.series[0].data = res.confirm_add;
+                ec_left2_Option.series[1].data= res.suspect_add;
+                ec_left2.setOption(ec_left2_Option)
+            },
+            error:function () {
+              alert('错误')
+            }
+        })
+    }
+
+    function  get_r2_data() {
+        $.ajax({
+            url : '/r2',
+            success:function (res) {
+                ec_right2_option.series[0].data=res.kws;
+                ec_right2.setOption(ec_right2_option)
+            },
+            error:function () {
+                console.log('哪儿错了，拖出去打死')
+            }
+        })
+    }
+
+
+    function get_r1_data() {
+        $.ajax({
+            url : '/r1',
+            success:function (res) {
+                console.log(res.title,res.num);
+                ec_right1_option.xAxis.data = res.title;
+                ec_right1_option.series[0].data = res.num;
+                ec_right1.setOption(ec_right1_option)
+            },
+            error:function () {
+             console.log('哪儿错了，拖出去打死')
+            }
+
+        })
+
+    }
+{#    setInterval(get_c1_data,1000);#}
+setInterval(gettime,1000);
+get_c1_data();
+get_c2_data();
+get_l1_data();
+get_l2_data();
+get_r1_data();
+get_r2_data();
+
+</script>
+
+
+
+
+</body>
+</html>
